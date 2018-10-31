@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if ! (command -v fzf >/dev/null 2>&1); then
+    echo "fzf needs to be installed for these functions to work. Please https://github.com/junegunn/fzf and install as applicable for your platform."
+fi
+
+function _ibmcloud-service-delete() {
+    SERVICE_NAME="$*"
+
+    ibmcloud cf service-keys "$SERVICE_NAME" | tail -n +6 | gxargs --no-run-if-empty -d"\n" -n 1 ibmcloud cf delete-service-key -f "$SERVICE_NAME"
+    ibmcloud cf delete-service -f "$SERVICE_NAME"
+}
+
+function ibmcloud-service-delete-interactive() {
+    COLUMNS=80 ibmcloud service list | tail -n +7 | perl -pe 's|^([\(\)\-\_\w\s]+?)(\s{2}.*)|\1|' | sort -r | fzf -m | gxargs -d"\n" -n 1 -I {} bash -c "$(declare -f _ibmcloud-service-delete); _ibmcloud-service-delete '{}'"
+}
+
+function ibmcloud-app-delete-interactive() {
+    ibmcloud cf apps | sed -E 's%([^[:space:]]+).*%\1%g' | tail -n +7 | sort -r | fzf -m | xargs -n 1 -t ibmcloud cf delete -f
+}
