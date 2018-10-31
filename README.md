@@ -1,5 +1,9 @@
 # Overview
 
+**NOTE**: These are *not* officially-supported IBM tools. They are provided
+here as a best-effort individual approach. Be careful when using these tools -
+you could quickly delete a lot of stuff by accident! 
+
 This repo provides a bash script, `ibmcloud-cli-utils`, which can be sourced
 to provide two functions:
 
